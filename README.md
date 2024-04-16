@@ -1,6 +1,6 @@
 # ur5_sim_control_teleop
 
-This package provides a framework to simulation, teleoperation and control of arm robotic UR5.(https://youtu.be/N-K3yT8Tsxw).
+This package provides a framework to simulation, teleoperation and control of arm robotic UR5.
 
 <p align="center">
     <img src="worlds/repo_marsupial-optimizer.gif" width="400">
@@ -8,13 +8,6 @@ This package provides a framework to simulation, teleoperation and control of ar
 <p align="center">
     <img src="worlds/repo_marsupial-optimizer2.gif" width="400">
 </p>
-
-To the best of our knowledge, this is the first method that addresses  the trajectory planning of a marsupial UGV-UAV with a non-taut tether. The optimizer input is  a trajectory calculated by adding a temporal aspect to a path, which is computing using a planner based on an optimal Rapidly-exploring Random Trees (RRT*) algorithm with novel sampling and steering techniques to speed up the computation. This algorithm can obtain collision-free paths for the UAV and the UGV, taking into account the 3D environment and the tether.
-
-The trajectory optimization is based on non-linear least squares. The optimizer takes into account  aspects not considered in the path planning, like temporal constraints of the motion imposed by limits on the velocities and accelerations of the robots, trajectory smoothness, obstacles-free, or raising the tether's clearance. 
-
-The optimization process is based on the framework ceres-solver (http://ceres-solver.org/)
-
 ## Installation
 
 In this section, you will find the installation instructions for making it work. The next section (prerequisites) tells you the environment in which the package has been tested.
@@ -29,42 +22,5 @@ This package has been designed and tested in an x86_64 machine under a Ubuntu 20
 - timed_roslaunch
 - universal_robot (https://github.com/ros-industrial/universal_robot)
 - upo_actions (https://github.com/robotics-upo/upo_actions, branch: master)
-- fireawareness_ros
+- fireawareness_ros (Private repository, provided by: robotics-upo)
 
-### Installation steps:
-
-1- Clone this repository into the source of your catkin workspace. Please refer to http://wiki.ros.org/catkin/Tutorials/create_a_workspace to setup a new workspace.
-
-2- Call marsupial_setup.sh script from marsupial_optimizer/script directory to install package dependencies.
-
-
-rosrun marsupial_optimizer marsupial_setup.sh
-
-
-3- Call the ceres_installation.sh script to install Ceres-Solver required dependencies (will be installed in /home/$user/).
-
-
-rosrun marsupial_optimizer ceres_installation.sh
-
-
-4- Finally compile your workspace using catkin_make 
-
-## Usage
-
-Five scenarios with different features can be set to use the optimizer. S1: Open environment, S2: Narrow/constrained environment, S3: Confined environment, S4: Confined environment, S5: Open environment, as shown in the next figure.
-
-<p align="center">
-    <img src="worlds/all_scenario.png" width="1000">
-</p>
-
-The package has a set of predefined configurations (and completely extendable according to the user's need) that relate to the stage number, initial position number, and goal position number. The set of initial positions can be checked in /cfg and the goal positions in /trees/resources/.
-
-To launch the optimizer just launch the provided launch/marsupial_optimization_trayectory.launch file. To manage the scenario and initial position predefined is recommended to use the parameters for this launch, scenario_number and num_pos_initial. Thus, for example, to use S2 and initial position 2: 
-
-
-roslaunch marsupial_optimizer planner_and_optimizer.launch scenario_number:=2 num_pos_initial:=2
-
-
-It will launch the optimizer and the visualization of the environment and marsupial robots in RVIZ. 
-
-To start the optimization process is necessary to publish a desired goal position in the topic /Make_Plan/goal.
