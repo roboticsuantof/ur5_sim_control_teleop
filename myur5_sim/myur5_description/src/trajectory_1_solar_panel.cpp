@@ -46,7 +46,6 @@ public:
     MissionInterface(std::string node_name)
     {
         // Local node handler
-        // nh_.reset(new ros::NodeHandle("~"));  
         ros::NodeHandle nh_("~");
 
         // Read node parameters
@@ -77,7 +76,6 @@ public:
     {
         int taskIndex = 0;
         std::vector<geometry_msgs::Pose> waypoints;
-        
         ros::NodeHandle nh_;
        
         // Inicializa el grupo de movimiento del brazo UR5
@@ -85,18 +83,17 @@ public:
         moveit::planning_interface::MoveGroupInterface move_group(PLANNING_GROUP);
         const robot_state::JointModelGroup *joint_model_group = move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
-        moveit::planning_interface::MoveGroupInterface::Plan plan;
-            
+        moveit::planning_interface::MoveGroupInterface::Plan plan;          
         // const std::string planner_plugin_name = "RRTstar::CommandPlanner";
         // move_group.setPlannerId(planner_plugin_name);
 
-        //tiempo mximo de planificacion
+        //tiempo maximo de planificacion
         move_group.setPlanningTime(12.0);
         std::string end_effector_link = "wrist_3_link";
         // double orientation_tolerance = 0.5;
         // double position_tolerance = 1E-6;
         
-        // // establecer valores de referencia
+        // establecer valores de referencia
         move_group.setEndEffectorLink(end_effector_link);
         // move_group.setGoalOrientationTolerance(orientation_tolerance);
         // move_group.setGoalPositionTolerance(position_tolerance);  
@@ -113,14 +110,11 @@ public:
             move_group.move();
         }
 
-
-
         while(ros::ok() && taskIndex < mission_.size()){
                 
             // Define la posición deseada
             missionTask t = mission_[taskIndex];
-            switch (t.type_) {
-                                              
+            switch (t.type_) {                                            
                 case taskType::wpd: {
 
                     //posiciones y orientacion segun archivo de configuracion
@@ -162,22 +156,7 @@ public:
             }
             taskIndex++;
         }    
-       
-        
-        // const moveit::core::JointModelGroup* joint_model_group1 = move_group.getCurrentState()->getJointModelGroup("manipulator");
-        // std::vector<double> joint_group_positions;
-        // current_state->copyJointGroupPositions(joint_model_group1, joint_group_positions);
-
-        // // Print the current joint values
-        // for (size_t i = 0; i < joint_group_positions.size(); ++i) {
-        // ROS_INFO("Joint %zu: %f", i, joint_group_positions[i]);
-        // }        
-        // // Configura la velocidad y la aceleración máximas
-        // move_group.setMaxVelocityScalingFactor(0.2);  // Ajusta la velocidad máxima
-        // move_group.setMaxAccelerationScalingFactor(0.2);  // Ajusta la aceleración máxima
-        // moveit::core::RobotState start_state(*move_group.getCurrentState());
-        // std::cout << "2"<< std::endl; 
-        
+               
         moveit_msgs::RobotTrajectory trajectory;
         move_group.setPlanningTime(10.0);
 
@@ -220,16 +199,11 @@ public:
         // visual_tools.publishAxisLabeled(waypoints[i], "pt" + std::to_string(i), rvt::SMALL);
         // visual_tools.trigger();
         // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
-
         move_group.execute(plan);
         printf("Mission finished!\n");
         ros::spinOnce();           
-        
-    }
-              
-            
-    
-
+        }
+                     
     void loadMission(const std::string &path_file)
     {
         YAML::Node file = YAML::LoadFile(path_file);
