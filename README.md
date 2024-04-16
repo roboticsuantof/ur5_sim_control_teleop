@@ -3,10 +3,7 @@
 This package provides a framework to simulation, teleoperation and control of arm robotic UR5.
 
 <p align="center">
-    <img src="worlds/repo_marsupial-optimizer.gif" width="400">
-</p>
-<p align="center">
-    <img src="worlds/repo_marsupial-optimizer2.gif" width="400">
+    <img "myur5_sim/myur5_description/worlds/ur5_sim" width="400">
 </p>
 ## Installation
 
