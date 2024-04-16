@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<launch>
+  <param name="use_sim_time" value="true"/>
+  <arg name="paused" default="false"/>
+  <arg name="gazebo_gui" default="true"/>
+  <arg name="initial_joint_positions" doc="Initial joint configuration of the robot"
+  default=" -J elbow_joint 0 -J shoulder_lift_joint 0 -J shoulder_pan_joint 0 -J wrist_1_joint 0 -J wrist_2_joint 0 -J wrist_3_joint 0"/>
+    <arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface" />
+
+  <!-- startup simulated world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" default="$(find myur5_description)/worlds/inspeccion_1.world"/>
+    <arg name="paused" value="true"/>
+    <arg name="gui" value="$(arg gazebo_gui)"/>
+  </include>
+  
+ <!-- By default we do not overwrite the URDF. Change the following to true to change the default behavior -->
+  <arg name="load_robot_description" default="false"/>
+
+  <!-- The name of the parameter under which the URDF is loaded -->
+  <arg name="robot_description" default="robot_description"/>
+
+  <!-- send robot urdf to param server -->
+ <param name="robot_description" command="$(find xacro)/xacro '$(find myur5_description)/urdf/myur5.urdf.xacro' transmission_hw_interface:=$(arg transmission_hw_interface)" />
+
+  <!-- unpause only after loading robot model -->
+  <arg name="unpause" value="$(eval '' if arg('paused') else '-unpause')" />
+  <!-- push robot_description to factory and spawn robot in gazebo at the origin, change x,y,z arguments to spawn in a different position -->
+  <arg name="world_pose" value="-x 0 -y 0 -z 0" />
+  
+ 
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model ur5 -z 0.0" respawn="false" output="screen" />
+    <include file="$(find ur_gazebo)/launch/controller_utils.launch"/>
+
+  <!-- start this controller -->
+  <rosparam file="$(find ur_gazebo)/controller/arm_controller_ur5.yaml" command="load"/>
+  <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/>
+  
+
+  <!-- The semantic description that corresponds to the URDF -->
+  <!-- <param name="$(arg robot_description)_semantic" textfile="$(find myur5_moveit_config)/config/myur5.srdf" /> -->
+
+  <!-- Load updated joint limits (override information from URDF) -->
+  <!-- <group ns="$(arg robot_description)_planning">
+    <rosparam command="load" file="$(find myur5_moveit_config)/config/joint_limits.yaml"/>
+    <rosparam command="load" file="$(find myur5_moveit_config)/config/cartesian_limits.yaml"/>
+  </group> -->
+
+  <!-- Load default settings for kinematics; these settings are overridden by settings in a node's namespace -->
+  <!-- <group ns="$(arg robot_description)_kinematics">
+    <rosparam command="load" file="$(find myur5_moveit_config)/config/kinematics.yaml"/>
+
+  </group> -->
+
+
+
+</launch>
+
+

@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="myur5">
+  <xacro:include filename="$(find myur5_description)/urdf/myur5.gazebo" />
+  <xacro:include filename="$(find myur5_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find myur5_description)/urdf/camera.xacro" />
+
+    <link name="world"/>
+  <link name="pedestal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <mass value="20"/>
+      <inertia ixx="200" ixy="200" ixz="200" iyy="200" iyz="200" izz="200"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <geometry>
+        <cylinder length="0.9" radius="0.15"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="1.0 0.4235294117647059 0.0392156862745098 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <geometry>
+        <cylinder length="0.9" radius="0.15"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link="pedestal" />
+    <origin xyz="0 0 0" rpy="0.0 0.0 0.0"/>
+  </joint>
+
+  <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
+
+  <!-- common stuff -->
+  <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
+
+  <!-- ur5 -->
+  <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro" />
+  <!-- arm -->
+  <xacro:ur5_robot prefix="" joint_limited="true"
+    transmission_hw_interface="$(arg transmission_hw_interface)"  />
+
+  <joint name="base_joint" type="fixed">
+    <parent link="pedestal" />
+    <child link="base_link" />
+    <origin xyz="0 0 0.9" rpy="0.0 0.0 3.14"/>
+  </joint>
+
+    <!-- Adding Camera to the robot end effector -->
+  <!-- <xacro:property name="camera_width" value="0.04" />
+  <joint name="camera_joint" type="fixed">
+    <origin xyz="0 0.05 0.07" rpy="0 0 1.57"/>
+    <parent link="wrist_3_link"/>
+    <child link="camera_link"/>
+  </joint> -->
+
+  <!-- Camera -->
+  <!-- <link name="camera_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+         <box size="${camera_width} ${camera_width} ${camera_width}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+         <box size="${camera_width} ${camera_width} ${camera_width}"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+
+
+  </link> -->
+ </robot>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="mission_file" default="trajectory_2_arm_robotic"/>
+    <arg name="mission_path" default="$(find myur5_description)/cfg/$(arg mission_file).yaml"/>
+
+    <node name="trajectory_1_solar_panel_node" pkg="myur5_description" type="trajectory_1_solar_panel_node" output="screen" launch-prefix="">
+        <param name="mission_file_path" value="$(arg mission_path)"/> 
+        <param name="start_immediately" value="true"/> 
+    </node>
+
+</launch>

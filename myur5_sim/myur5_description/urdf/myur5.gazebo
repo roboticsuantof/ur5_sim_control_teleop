@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<robot>
+
+  <gazebo reference="pedestal">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Orange</material>
+    
+  </gazebo>
+
+<!-- camera -->
+ 
+  <!-- gazebo ros controller plugin /-->
+  <!-- this is defined in ur_description/urdf/common.gazebo.xacro file -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/myur5</robotNamespace>
+    </plugin>
+  </gazebo>
+</robot>

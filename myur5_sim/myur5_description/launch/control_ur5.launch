@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+  
+    <node pkg="myur5_description" type="ur5_control_node" name="ur5_control_node" output="screen">
+    </node>
+
+</launch>

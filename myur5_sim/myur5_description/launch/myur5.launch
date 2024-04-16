@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <param name="use_sim_time" value="true"/>
+  <arg name="limited" default="true"  doc="If true, limits joint range [-PI, PI] on all joints." />
+  <arg name="paused" default="false" doc="Starts gazebo in paused mode" />
+  <arg name="gui" default="true" doc="Starts gazebo gui" />
+  <arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface" />
+  
+
+
+
+  <!-- startup simulated world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!--arg name="world_name" default="worlds/empty.world"/-->
+    <arg name="world_name" value="$(find myur5_description)/worlds/inspeccion_1.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="verbose" value="true"/>
+
+   
+  </include>
+
+  <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find myur5_description)/urdf/myur5.urdf' transmission_hw_interface:=$(arg transmission_hw_interface)" /> -->
+  <param name="robot_description" textfile="$(find myur5_description)/urdf/myur5.urdf"/>
+  
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <!-- <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model myur5" respawn="false" output="screen" /> -->
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find myur5_description)/urdf/myur5.urdf -urdf -model myur5 -J shoulder_lift_joint -1.5 -J elbow_joint 1.0" >
+  <param name="yaw" value="1.57"/>
+  </node>
+
+  
+  <!-- send joint values -->
+  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="True"/>
+  </node>
+   -->
+  <include file="$(find ur_gazebo)/launch/controller_utils.launch"/>
+
+
+   <!-- Load ROS controllers -->
+  <!-- <include file="$(find myur5_moveit_config)/launch/ros_controllers.launch"/> -->
+
+
+
+    <!-- start this controller -->
+    <!-- <rosparam file="$(find myur5_moveit_config)/config/arm_controller_ur5.yaml" command="load"/> -->
+    <rosparam file="$(find ur_gazebo)/controller/arm_controller_ur5.yaml" command="load"/>
+    <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/>
+    
+
+    
+    <!-- <arg name="paused" value="false" /> -->
+ 
+  <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+       args="6 myur5_moveit_config myur5_planning_execution.launch"
+       name="timed_roslaunch" output="screen" />
+  
+  <!-- <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+       args="6 myur5_description initial_position.launch"
+       name="timed_roslaunch2" output="screen" /> -->
+       
+    <!-- <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+       args="8 myur5_description only_simulation.launch"
+       name="timed_roslaunch3" output="screen" /> -->
+
+  <!-- Lanzar el controlador arm -->
+  <!-- <node name="arm_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="arm_controller"/> -->
+
+  <!-- Lanzar el nodo C++ para cambiar las posiciones iniciales -->
+  <!-- <node name="set_initial_joint_state_node" pkg="myur5_description" type="set_initial_joint_state_node" output="screen"/> -->
+    <!-- <node pkg="myur5_description" type="set_initial_joint_state_node" name="set_initial_joint_state_node" output="screen">
+    </node> -->
+
+</launch>

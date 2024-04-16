@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="dev" default="/dev/input/js1"/>
+    
+    <node pkg="joy" type="joy_node" name="joy" output="screen">
+        <param name="dev" value="$(arg dev)" /> 
+        <param name="deadzone" value="0.2" />
+        <param name="autorepeat_rate" value="40" />
+        <param name="coalesce_interval" value="0.025" />
+
+    </node>
+
+    <node pkg="myur5_description" type="ur5_teleop_control_node" name="ur5_teleop_control_node" output="screen">
+    </node>
+
+
+</launch>
